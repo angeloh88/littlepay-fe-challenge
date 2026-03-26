@@ -2,6 +2,8 @@
 
 # dependencies
 /node_modules
+/fe_challenge_api/node_modules/
+/payquick-frontend/node_modules/
 /.pnp
 .pnp.*
 .yarn/*

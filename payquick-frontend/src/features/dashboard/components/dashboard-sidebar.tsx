@@ -1,3 +1,5 @@
+"use client";
+
 import {
   BarChart3,
   CreditCard,
@@ -8,6 +10,7 @@ import {
   WalletCards,
 } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 
@@ -15,16 +18,22 @@ const nav: {
   href: string;
   label: string;
   icon: typeof LayoutDashboard;
-  active?: boolean;
 }[] = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, active: true },
-  { href: "#", label: "Payments", icon: WalletCards },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/transactions", label: "Payments", icon: WalletCards },
   { href: "#", label: "Cards", icon: CreditCard },
   { href: "#", label: "Insights", icon: BarChart3 },
   { href: "#", label: "Settings", icon: Settings },
 ];
 
 export function DashboardSidebar() {
+  const pathname = usePathname();
+
+  function isActive(href: string) {
+    if (href === "#") return false;
+    return pathname === href;
+  }
+
   return (
     <aside className="fixed left-0 top-0 z-40 flex h-full w-64 flex-col gap-2 border-r border-transparent bg-slate-50 px-4 py-8 font-body text-[0.875rem] font-medium dark:bg-slate-950">
       <div className="mb-10 flex items-center gap-3 px-4">
@@ -43,13 +52,14 @@ export function DashboardSidebar() {
       <nav className="flex-1 space-y-1">
         {nav.map((item) => {
           const Icon = item.icon;
+          const active = isActive(item.href);
           return (
             <Link
               key={item.label}
               href={item.href}
               className={cn(
                 "flex items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200",
-                item.active
+                active
                   ? "bg-white text-blue-700 shadow-sm dark:bg-slate-900 dark:text-blue-400"
                   : "text-slate-500 hover:translate-x-1 hover:text-slate-900 dark:hover:text-slate-100",
               )}

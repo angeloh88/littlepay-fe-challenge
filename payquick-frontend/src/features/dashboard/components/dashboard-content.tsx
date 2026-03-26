@@ -147,7 +147,7 @@ export function DashboardContent() {
                 className="h-auto gap-1 p-0 text-sm font-bold text-primary hover:gap-2"
                 asChild
               >
-                <Link href="#">
+                <Link href="/transactions">
                   View All
                   <ArrowRight className="size-[18px]" strokeWidth={2} />
                 </Link>

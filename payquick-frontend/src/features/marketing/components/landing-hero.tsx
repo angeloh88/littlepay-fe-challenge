@@ -2,12 +2,9 @@ import { Shield } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-const HERO_MAIN =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuCumIOOhJprm2t8-QOS_oJx24eixuplUs-GqJAmhN8cQjE8_3lPi4Uu1_IBkSGVnNKD4St9UYkQ79EfD2XtN-i5TuoZ6q9HavXviaikali6wRW_J3pJV_b_ZHaIJBLr2mLVKkzyg4wzCKF_RyIEibbZUDudPZOMeUegaDM9pUyZKBRVN81RS7cXjDylsj5ppfI-eihmroUnB7PUe8C3iAWCm4G6ZEBF_ke0k7dsynywNQOQUeMgdnGlD19D3SsxJHCS2o6fl0rB1tHR";
-const HERO_SMALL_TOP =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuCIi68lPxS6J1hFyUoKQ98IrIp7qm_cXutoYAiLJLHB9H1epYJXlGydJiIpZztzDlA_Zm9kX4jxqeweFKzjRORWIPZ4Hb-ThvWNlha58eNO8IrjFfPyJlpJz6LqVUk1opPVd-MULECsaESVbuoIPH053eqzkCwY-JfOGWPDhqPE2mU5SmWQ3rnDYrLcodh-j6L096rjAaE6JQ6SHeV31s7q30TJ83jvY80Cvopi3d8Pw7a-8k_8Y8VQNXMwaBl4hSp-ClRP4qPzxz_l";
-const HERO_SMALL_BOTTOM =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuCvpTPQye0Kzqgjypq2Xttgyvdpu-ssZfLQ7X2VUU1-gYikfOJpFCj83z2jpw0F0cWQVXuiw4_Xp8DT3RTIKSoSJShFaH8pqYBTAuKr2B54H5--CYtSic6MNo8pmnmrhHYjNMgLZW1nKEl3rsy22z8MRz0EYyMX4av7xLAK-3_V44yynScsyeP4LMF5avRrrbxIZaZe5Sjtb17V9rZFtXCtoQmv89-S9OavIdZSidncUMIlxqyZ2u31o9CN727JqyTZ9Q4R19Zj3rbg";
+const HERO_MAIN = "/images/landing-hero-main.png";
+const HERO_SMALL_TOP = "/images/landing-hero-small-top.png";
+const HERO_SMALL_BOTTOM = "/images/landing-hero-small-bottom.png";
 
 export function LandingHero() {
   return (

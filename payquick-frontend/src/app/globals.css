@@ -1,26 +1,275 @@
 @import "tailwindcss";
 
+/* --------------------------------------------------------------------------
+   PayQuick / Digital Vault — design tokens (DESIGN.md + design HTML refs)
+   Shadcn-friendly semantic aliases + full Material-style palette for utilities.
+   -------------------------------------------------------------------------- */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Surfaces */
+  --surface: #f8f9ff;
+  --surface-bright: #f8f9ff;
+  --surface-dim: #d8dadf;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #f2f3f9;
+  --surface-container: #eceef3;
+  --surface-container-high: #e6e8ed;
+  --surface-container-highest: #e1e2e8;
+  --surface-variant: #e1e2e8;
+  --surface-tint: #0057ce;
+
+  /* Content on surfaces */
+  --on-surface: #191c20;
+  --on-surface-variant: #424655;
+  --on-background: #191c20;
+  --inverse-on-surface: #eff0f6;
+  --inverse-surface: #2e3135;
+
+  /* Brand / actions */
+  --primary: #0057cd;
+  --on-primary: #ffffff;
+  --primary-container: #0d6efd;
+  --on-primary-container: #ffffff;
+  --inverse-primary: #b1c5ff;
+
+  --secondary: #425c9b;
+  --on-secondary: #ffffff;
+  --secondary-container: #a0baff;
+  --on-secondary-container: #2e4986;
+
+  --tertiary: #a63b00;
+  --on-tertiary: #ffffff;
+  --tertiary-container: #cf4b00;
+  --on-tertiary-container: #ffffff;
+
+  /* Fixed / badge tones */
+  --primary-fixed: #dae2ff;
+  --primary-fixed-dim: #b1c5ff;
+  --on-primary-fixed: #001946;
+  --on-primary-fixed-variant: #00419e;
+
+  --secondary-fixed: #dae2ff;
+  --secondary-fixed-dim: #b1c5ff;
+  --on-secondary-fixed: #001946;
+  --on-secondary-fixed-variant: #294481;
+
+  --tertiary-fixed: #ffdbce;
+  --tertiary-fixed-dim: #ffb599;
+  --on-tertiary-fixed: #370e00;
+  --on-tertiary-fixed-variant: #7f2b00;
+
+  /* Outlines & structure (no heavy borders — see ghost border utility) */
+  --outline: #727787;
+  --outline-variant: #c2c6d8;
+
+  /* Status */
+  --error: #ba1a1a;
+  --on-error: #ffffff;
+  --error-container: #ffdad6;
+  --on-error-container: #93000a;
+
+  /* Shadcn semantic mapping (buttons, cards, inputs) */
+  --background: var(--surface);
+  --foreground: var(--on-surface);
+  --card: var(--surface-container-lowest);
+  --card-foreground: var(--on-surface);
+  --popover: var(--surface-container-lowest);
+  --popover-foreground: var(--on-surface);
+  --primary-foreground: var(--on-primary);
+  --secondary-foreground: var(--on-secondary-container);
+  --muted: var(--surface-container-low);
+  --muted-foreground: var(--on-surface-variant);
+  --accent: var(--primary-fixed);
+  --accent-foreground: var(--on-primary-fixed-variant);
+  --destructive: var(--error);
+  --destructive-foreground: var(--on-error);
+  --border: color-mix(in srgb, var(--outline-variant) 20%, transparent);
+  --input: var(--surface-container-highest);
+  --ring: color-mix(in srgb, var(--primary) 20%, transparent);
+
+  /* Radius: DESIGN.md — xl = 0.75rem for cards/inputs; badges use rounded-full */
+  --radius: 0.75rem;
+  --ds-radius-sm: 0.125rem;
+  --ds-radius-md: 0.25rem;
+  --ds-radius-lg: 0.25rem;
+  --ds-radius-xl: 0.75rem;
+
+  /* Elevation */
+  --ds-shadow-editorial: 0 12px 32px rgb(25 28 32 / 0.06);
+
+  /* Primary CTA gradient (135° — “Glass & Gradient” rule) */
+  --gradient-primary: linear-gradient(
+    135deg,
+    var(--primary) 0%,
+    var(--primary-container) 100%
+  );
+
+  /* Spacing semantics (0.2rem-based scale from DESIGN.md §7) */
+  --ds-space-tight: 0.4rem; /* token “2” */
+  --ds-space-standard: 0.9rem; /* token “4” */
+  --ds-space-sectional: 2.25rem; /* token “10” */
+  --ds-space-breathing: 1.75rem; /* token “8” — when sections feel crowded */
+  /* Transaction rows — no dividers; gap token “3” */
+  --ds-space-list: 0.6rem;
 }
 
 @theme inline {
+  /* Colors — use bg-surface, text-on-surface, bg-primary, etc. */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-surface: var(--surface);
+  --color-surface-bright: var(--surface-bright);
+  --color-surface-dim: var(--surface-dim);
+  --color-surface-container-lowest: var(--surface-container-lowest);
+  --color-surface-container-low: var(--surface-container-low);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-surface-container-highest: var(--surface-container-highest);
+  --color-surface-variant: var(--surface-variant);
+  --color-surface-tint: var(--surface-tint);
+
+  --color-on-surface: var(--on-surface);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-on-background: var(--on-background);
+  --color-inverse-surface: var(--inverse-surface);
+  --color-inverse-on-surface: var(--inverse-on-surface);
+
+  --color-on-primary: var(--on-primary);
+  --color-primary-container: var(--primary-container);
+  --color-on-primary-container: var(--on-primary-container);
+  --color-inverse-primary: var(--inverse-primary);
+
+  --color-on-secondary: var(--on-secondary);
+  --color-secondary-container: var(--secondary-container);
+  --color-on-secondary-container: var(--on-secondary-container);
+
+  --color-tertiary: var(--tertiary);
+  --color-on-tertiary: var(--on-tertiary);
+  --color-tertiary-container: var(--tertiary-container);
+  --color-on-tertiary-container: var(--on-tertiary-container);
+
+  --color-primary-fixed: var(--primary-fixed);
+  --color-primary-fixed-dim: var(--primary-fixed-dim);
+  --color-on-primary-fixed: var(--on-primary-fixed);
+  --color-on-primary-fixed-variant: var(--on-primary-fixed-variant);
+
+  --color-secondary-fixed: var(--secondary-fixed);
+  --color-secondary-fixed-dim: var(--secondary-fixed-dim);
+  --color-on-secondary-fixed: var(--on-secondary-fixed);
+  --color-on-secondary-fixed-variant: var(--on-secondary-fixed-variant);
+
+  --color-tertiary-fixed: var(--tertiary-fixed);
+  --color-tertiary-fixed-dim: var(--tertiary-fixed-dim);
+  --color-on-tertiary-fixed: var(--on-tertiary-fixed);
+  --color-on-tertiary-fixed-variant: var(--on-tertiary-fixed-variant);
+
+  --color-outline: var(--outline);
+  --color-outline-variant: var(--outline-variant);
+
+  --color-error: var(--error);
+  --color-on-error: var(--on-error);
+  --color-error-container: var(--error-container);
+  --color-on-error-container: var(--on-error-container);
+
+  /* Typography — Manrope (headlines) + Inter (UI/data) */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-headline: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-label: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  /* Type scale (DESIGN.md §3) */
+  --text-display-lg: 3.5rem;
+  --text-display-lg--line-height: 1;
+  --text-display-lg--letter-spacing: -0.025em;
+
+  --text-headline-sm: 1.5rem;
+  --text-headline-sm--line-height: 1.2;
+
+  --text-title-md: 1.125rem;
+  --text-title-md--line-height: 1.35;
+
+  --text-body-md: 0.875rem;
+  --text-body-md--line-height: 1.5;
+
+  --text-label-sm: 0.6875rem;
+  --text-label-sm--line-height: 1.25;
+
+  /* Radius — align with DESIGN.md; keep `rounded-sm` etc. usable */
+  --radius-sm: var(--ds-radius-sm);
+  --radius-md: var(--ds-radius-md);
+  --radius-lg: var(--ds-radius-lg);
+  --radius-xl: var(--ds-radius-xl);
+  --radius-2xl: var(--ds-radius-xl);
+  --radius-3xl: var(--ds-radius-xl);
+  --radius-4xl: 1.5rem;
+
+  /* Shadows */
+  --shadow-editorial: var(--ds-shadow-editorial);
+
+  /* Background images */
+  --background-image-primary-gradient: var(--gradient-primary);
+
+  /* Design spacing aliases — gap-ds-tight, p-ds-sectional, etc. */
+  --spacing-ds-tight: var(--ds-space-tight);
+  --spacing-ds-standard: var(--ds-space-standard);
+  --spacing-ds-sectional: var(--ds-space-sectional);
+  --spacing-ds-breathing: var(--ds-space-breathing);
+  --spacing-ds-list: var(--ds-space-list);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer utilities {
+  /* Frosted overlay: surface-container-lowest @ 80% + 24px blur */
+  .glass-surface {
+    background-color: rgb(255 255 255 / 0.8);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  }
+
+  .glass-surface-tinted {
+    background-color: color-mix(in srgb, var(--surface) 80%, transparent);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  }
+
+  .editorial-shadow {
+    box-shadow: var(--ds-shadow-editorial);
+  }
+
+  .bg-primary-gradient {
+    background-image: var(--gradient-primary);
+  }
+
+  /* “Ghost border” — outline-variant @ 20% for focus / a11y-only edges */
+  .border-ghost {
+    border: 1px solid
+      color-mix(in srgb, var(--outline-variant) 20%, transparent);
+  }
+
+  .ring-ghost {
+    --tw-ring-color: color-mix(in srgb, var(--outline-variant) 20%, transparent);
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
 }

@@ -1,18 +1,30 @@
 "use client";
 
-import type { FormEvent } from "react";
+import type { SubmitEvent } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useLoginMutation } from "@/features/auth/hooks/use-login-mutation";
 
 export function LoginForm() {
-  const router = useRouter();
+    const router = useRouter();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const { mutate, isPending, isError, isSuccess } = useLoginMutation();
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    router.push("/dashboard");
-  }
+    function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
+        e.preventDefault();
+        mutate(
+            { email: email.trim(), password: password },
+            {
+                onSuccess: () => {
+                    router.push("/dashboard");
+                },
+            },
+        );
+    }
 
-  return (
-    <form className="space-y-6" onSubmit={handleSubmit} noValidate>
+    return (
+        <form className="space-y-6" onSubmit={handleSubmit} noValidate>
             <div className="space-y-2">
                 <label
                     className="px-1 font-label text-[0.6875rem] font-semibold uppercase tracking-wider text-on-surface-variant"
@@ -27,7 +39,9 @@ export function LoginForm() {
                         name="email"
                         type="email"
                         autoComplete="email"
-                        placeholder="alex@sterling.com"
+                        placeholder="email@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                     />
                 </div>
             </div>
@@ -54,15 +68,24 @@ export function LoginForm() {
                         type="password"
                         autoComplete="current-password"
                         placeholder="••••••••"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                     />
                 </div>
             </div>
             <button
                 className="w-full rounded-xl bg-linear-to-br from-primary to-primary-container px-6 py-4 font-headline text-sm font-bold text-on-primary shadow-md transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
                 type="submit"
+                disabled={isPending}
             >
-                Sign In
+                {isPending ? "Signing in..." : "Sign In"}
             </button>
-    </form>
-  );
+            {isError && (
+                <div className="text-sm text-red-500">Login failed</div>
+            )}
+            {isSuccess && (
+                <div className="text-sm text-green-500">Login successful</div>
+            )}
+        </form>
+    );
 }

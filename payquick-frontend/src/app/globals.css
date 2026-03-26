@@ -1,4 +1,8 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
 
 /* --------------------------------------------------------------------------
    PayQuick / Digital Vault — design tokens (DESIGN.md + design HTML refs)
@@ -32,7 +36,8 @@
   --on-primary-container: #ffffff;
   --inverse-primary: #b1c5ff;
 
-  --secondary: #425c9b;
+  /* Solid secondary (palette); shadcn `bg-secondary` uses container tones below */
+  --secondary-brand: #425c9b;
   --on-secondary: #ffffff;
   --secondary-container: #a0baff;
   --on-secondary-container: #2e4986;
@@ -68,7 +73,7 @@
   --error-container: #ffdad6;
   --on-error-container: #93000a;
 
-  /* Shadcn semantic mapping (buttons, cards, inputs) */
+  /* Shadcn semantic mapping — wired to PayQuick surfaces & brand */
   --background: var(--surface);
   --foreground: var(--on-surface);
   --card: var(--surface-container-lowest);
@@ -76,6 +81,8 @@
   --popover: var(--surface-container-lowest);
   --popover-foreground: var(--on-surface);
   --primary-foreground: var(--on-primary);
+  /* Secondary button = design secondary-container (DESIGN.md §5) */
+  --secondary: var(--secondary-container);
   --secondary-foreground: var(--on-secondary-container);
   --muted: var(--surface-container-low);
   --muted-foreground: var(--on-surface-variant);
@@ -111,6 +118,23 @@
   --ds-space-breathing: 1.75rem; /* token “8” — when sections feel crowded */
   /* Transaction rows — no dividers; gap token “3” */
   --ds-space-list: 0.6rem;
+
+  /* Charts — neutral scale tuned for vault UI (shadcn chart components) */
+  --chart-1: oklch(0.55 0.18 264);
+  --chart-2: oklch(0.62 0.12 264);
+  --chart-3: oklch(0.5 0.08 264);
+  --chart-4: oklch(0.45 0.06 250);
+  --chart-5: oklch(0.4 0.04 250);
+
+  /* Sidebar — aligned to surface / primary */
+  --sidebar: var(--surface-container-low);
+  --sidebar-foreground: var(--on-surface);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--on-primary);
+  --sidebar-accent: var(--surface-container);
+  --sidebar-accent-foreground: var(--on-surface);
+  --sidebar-border: color-mix(in srgb, var(--outline-variant) 20%, transparent);
+  --sidebar-ring: color-mix(in srgb, var(--primary) 20%, transparent);
 }
 
 @theme inline {
@@ -125,6 +149,7 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary-brand: var(--secondary-brand);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
@@ -233,6 +258,20 @@
   --spacing-ds-sectional: var(--ds-space-sectional);
   --spacing-ds-breathing: var(--ds-space-breathing);
   --spacing-ds-list: var(--ds-space-list);
+  --font-heading: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
 }
 
 @layer utilities {
@@ -272,4 +311,65 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-body);
+}
+
+/* Dark — vault-appropriate blues; shadcn charts/sidebar stay coherent */
+.dark {
+  --surface: #12151c;
+  --surface-bright: #161a22;
+  --surface-container-lowest: #1e222b;
+  --surface-container-low: #1a1e26;
+  --surface-container: #242830;
+  --surface-container-high: #2c313b;
+  --surface-container-highest: #343945;
+  --on-surface: #eff0f6;
+  --on-surface-variant: #b8bcc9;
+
+  --background: #191c20;
+  --foreground: #eff0f6;
+  --card: #1e222b;
+  --card-foreground: #eff0f6;
+  --popover: #1e222b;
+  --popover-foreground: #eff0f6;
+  --primary: #4d9fff;
+  --primary-foreground: #ffffff;
+  --primary-container: #0d6efd;
+  --secondary: #a0baff;
+  --secondary-foreground: #2e4986;
+  --muted: #2a2f38;
+  --muted-foreground: #9aa0b4;
+  --accent: #2c3550;
+  --accent-foreground: #dae2ff;
+  --destructive: oklch(0.65 0.19 25);
+  --destructive-foreground: #ffffff;
+  --border: color-mix(in srgb, var(--outline-variant) 25%, transparent);
+  --input: oklch(1 0 0 / 12%);
+  --ring: color-mix(in srgb, var(--primary) 40%, transparent);
+
+  --chart-1: oklch(0.72 0.16 264);
+  --chart-2: oklch(0.62 0.12 264);
+  --chart-3: oklch(0.55 0.1 250);
+  --chart-4: oklch(0.48 0.08 250);
+  --chart-5: oklch(0.42 0.06 250);
+
+  --sidebar: #1a1e26;
+  --sidebar-foreground: #eff0f6;
+  --sidebar-primary: #4d9fff;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #242830;
+  --sidebar-accent-foreground: #eff0f6;
+  --sidebar-border: color-mix(in srgb, var(--outline-variant) 25%, transparent);
+  --sidebar-ring: color-mix(in srgb, var(--primary) 40%, transparent);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
 }

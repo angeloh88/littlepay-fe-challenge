@@ -9,7 +9,7 @@ export function LoginForm() {
     const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const { mutate, isPending, isError, isSuccess } = useLoginMutation();
+    const { mutate, isPending, isError, error } = useLoginMutation();
 
     function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -81,10 +81,11 @@ export function LoginForm() {
                 {isPending ? "Signing in..." : "Sign In"}
             </button>
             {isError && (
-                <div className="text-sm text-red-500">Login failed</div>
-            )}
-            {isSuccess && (
-                <div className="text-sm text-green-500">Login successful</div>
+                <div className="text-sm text-red-500 text-center">
+                    {error instanceof Error
+                        ? error.message
+                        : "Something went wrong"}
+                </div>
             )}
         </form>
     );

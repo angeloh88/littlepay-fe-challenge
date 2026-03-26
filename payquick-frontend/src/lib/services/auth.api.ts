@@ -9,12 +9,9 @@ export type LoginUser = {
     email: string;
 };
 
+// Updated: no token fields because cookies are httpOnly
 export type LoginSuccessData = {
-    access_token: string;
-    expires_in: number;
-    refresh_token: string;
-    token_type: string;
-    user: LoginUser;
+    user?: LoginUser; // optional optimistic UI
 };
 
 export type LoginSuccessResponse = {
@@ -34,10 +31,22 @@ export async function login(
     const response = await fetch("/api/v1/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include", // ✅ crucial for httpOnly cookies
         body: JSON.stringify(credentials),
     });
 
-    const json: unknown = await response.json();
+    // Attempt to parse JSON, but if BFF doesn't return tokens, it's optional
+    let json: unknown = {};
+    try {
+        json = await response.json();
+    } catch {
+        // no JSON returned — that's okay when relying on cookies
+        json = {
+            status: response.ok ? "success" : "error",
+            message: response.ok ? "Logged in" : "Login failed",
+            data: {},
+        };
+    }
 
     if (!response.ok) {
         const err = json as LoginErrorResponse;

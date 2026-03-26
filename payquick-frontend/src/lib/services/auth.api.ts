@@ -27,3 +27,22 @@ export type LoginErrorResponse = {
     status: string;
     message: string;
 };
+
+export async function login(
+    credentials: LoginRequest,
+): Promise<LoginSuccessResponse> {
+    const response = await fetch("/api/v1/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(credentials),
+    });
+
+    const json: unknown = await response.json();
+
+    if (!response.ok) {
+        const err = json as LoginErrorResponse;
+        throw new Error(err.message ?? "Login failed");
+    }
+
+    return json as LoginSuccessResponse;
+}

@@ -5,7 +5,14 @@ import type { TransactionsResponse } from "@/lib/services/transactions.api";
 export function useInfiniteTransactionsQuery() {
     return useInfiniteQuery<TransactionsResponse>({
         queryKey: ["transactions"],
-        queryFn: ({ pageParam }) => getTransactions(pageParam as number),
+        //queryFn:({ pageParam }) => getTransactions(pageParam as number),
+        //apply a delay to the queryFn in development mode
+        queryFn: async ({ pageParam }) => {
+            if (process.env.NODE_ENV === "development") {
+                await new Promise((r) => setTimeout(r, 1000));
+            }
+            return getTransactions(pageParam as number);
+        },
 
         initialPageParam: 1,
 

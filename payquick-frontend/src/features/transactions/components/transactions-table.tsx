@@ -5,6 +5,10 @@ import { useInfiniteTransactionsQuery } from "@/features/auth/hooks/use-inifinit
 import { Button } from "@/components/ui/button";
 import { type Transaction } from "@/lib/services/transactions.api";
 import { TransactionRow } from "./transactions-row";
+import {
+    TransactionRowSkeleton,
+    TransactionsTableSkeleton,
+} from "./transactions-table-skeleton";
 
 function nesttedGroupTransactionsByYearMonth(transactions: Transaction[]) {
     return transactions.reduce(
@@ -63,7 +67,7 @@ export function TransactionsTable() {
         return () => observer.disconnect();
     }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-    if (isLoading) return <div>Loading...</div>;
+    if (isLoading) return <TransactionsTableSkeleton />;
     if (isError) return <div>Error</div>;
 
     if (!data || data.pages.length === 0) {
@@ -98,6 +102,18 @@ export function TransactionsTable() {
                             ))}
                     </section>
                 ))}
+            {isFetchingNextPage && (
+                <div
+                    className="mt-4 flex flex-col gap-[0.6rem]"
+                    role="status"
+                    aria-busy="true"
+                >
+                    <span className="sr-only">Loading more transactions</span>
+                    <TransactionRowSkeleton />
+                    <TransactionRowSkeleton />
+                    <TransactionRowSkeleton />
+                </div>
+            )}
             {isInfiniteScroll && <div ref={sentinelRef} aria-hidden />}
             <Button
                 type="button"
@@ -107,7 +123,7 @@ export function TransactionsTable() {
                 disabled={!hasNextPage || isFetchingNextPage}
             >
                 {isFetchingNextPage
-                    ? "Loading..."
+                    ? "Loading more…"
                     : hasNextPage
                       ? "Load more transactions"
                       : "No more transactions"}

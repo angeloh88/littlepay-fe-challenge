@@ -13,7 +13,18 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { cn } from "@/lib/utils";
+import {
+    Sidebar,
+    SidebarContent,
+    SidebarFooter,
+    SidebarGroup,
+    SidebarGroupContent,
+    SidebarHeader,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+    SidebarRail,
+} from "@/components/ui/sidebar";
 
 const nav: {
     href: string;
@@ -52,53 +63,79 @@ export function DashboardSidebar() {
     }
 
     return (
-        <aside className="fixed left-0 top-0 z-40 flex h-full w-64 flex-col gap-2 border-r border-transparent bg-slate-50 px-4 py-8 font-body text-[0.875rem] font-medium dark:bg-slate-950">
-            <div className="mb-10 flex items-center gap-3 px-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-container text-white">
-                    <Wallet className="size-5" aria-hidden strokeWidth={2} />
+        <Sidebar
+            collapsible="icon"
+            className="border-r border-transparent bg-slate-50 dark:bg-slate-950 **:data-[sidebar=sidebar]:bg-slate-50 dark:**:data-[sidebar=sidebar]:bg-slate-950"
+        >
+            <SidebarHeader className="gap-3 border-b border-sidebar-border/60 px-2 py-4">
+                <div className="flex items-center gap-3 px-2">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-container text-white">
+                        <Wallet
+                            className="size-5"
+                            aria-hidden
+                            strokeWidth={2}
+                        />
+                    </div>
+                    <div className="grid min-w-0 flex-1 text-left leading-tight group-data-[collapsible=icon]:hidden">
+                        <span className="font-headline truncate text-lg font-extrabold text-blue-700 dark:text-blue-400">
+                            PayQuick
+                        </span>
+                        <span className="truncate text-[0.6875rem] font-medium uppercase tracking-widest text-slate-500">
+                            Premium Fintech
+                        </span>
+                    </div>
                 </div>
-                <div>
-                    <h1 className="font-headline text-xl font-extrabold leading-none text-blue-700">
-                        PayQuick
-                    </h1>
-                    <p className="mt-1 text-[0.6875rem] uppercase tracking-widest text-slate-500">
-                        Premium Fintech
-                    </p>
-                </div>
-            </div>
-            <nav className="flex-1 space-y-1">
-                {nav.map((item) => {
-                    const Icon = item.icon;
-                    const active = isActive(item.href);
-                    return (
-                        <Link
-                            key={item.label}
-                            href={item.href}
-                            className={cn(
-                                "flex items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200",
-                                active
-                                    ? "bg-white text-blue-700 shadow-sm dark:bg-slate-900 dark:text-blue-400"
-                                    : "text-slate-500 hover:translate-x-1 hover:text-slate-900 dark:hover:text-slate-100",
-                            )}
+            </SidebarHeader>
+            <SidebarContent className="px-0 py-2">
+                <SidebarGroup>
+                    <SidebarGroupContent>
+                        <SidebarMenu className="gap-1 px-2">
+                            {nav.map((item) => {
+                                const Icon = item.icon;
+                                const active = isActive(item.href);
+                                return (
+                                    <SidebarMenuItem key={item.label}>
+                                        <SidebarMenuButton
+                                            asChild
+                                            isActive={active}
+                                            tooltip={item.label}
+                                            className="h-11 rounded-xl px-3 text-[0.875rem] font-medium text-slate-500 transition-all duration-200 hover:translate-x-0.5 hover:text-slate-900 data-active:translate-x-0 data-active:bg-white data-active:text-blue-700 data-active:shadow-sm dark:text-slate-400 dark:hover:text-slate-100 dark:data-active:bg-slate-900 dark:data-active:text-blue-400"
+                                        >
+                                            <Link href={item.href}>
+                                                <Icon
+                                                    className="size-5"
+                                                    strokeWidth={2}
+                                                />
+                                                <span>{item.label}</span>
+                                            </Link>
+                                        </SidebarMenuButton>
+                                    </SidebarMenuItem>
+                                );
+                            })}
+                        </SidebarMenu>
+                    </SidebarGroupContent>
+                </SidebarGroup>
+            </SidebarContent>
+            <SidebarFooter className="border-t border-sidebar-border/60 p-2">
+                <SidebarMenu>
+                    <SidebarMenuItem>
+                        <SidebarMenuButton
+                            type="button"
+                            tooltip={isLoggingOut ? "Signing out…" : "Logout"}
+                            disabled={isLoggingOut}
+                            aria-busy={isLoggingOut}
+                            onClick={() => void handleLogout()}
+                            className="h-11 cursor-pointer rounded-xl px-3 text-left text-[0.875rem] font-medium text-slate-500 hover:text-destructive disabled:opacity-50"
                         >
-                            <Icon className="size-5 shrink-0" strokeWidth={2} />
-                            <span>{item.label}</span>
-                        </Link>
-                    );
-                })}
-            </nav>
-            <div className="border-t border-slate-200/50 pt-4">
-                <button
-                    type="button"
-                    onClick={() => void handleLogout()}
-                    disabled={isLoggingOut}
-                    className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-slate-500 transition-all duration-200 hover:text-error disabled:opacity-50 cursor-pointer"
-                    aria-busy={isLoggingOut}
-                >
-                    <LogOut className="size-5 shrink-0" strokeWidth={2} />
-                    <span>{isLoggingOut ? "Signing out…" : "Logout"}</span>
-                </button>
-            </div>
-        </aside>
+                            <LogOut className="size-5" strokeWidth={2} />
+                            <span>
+                                {isLoggingOut ? "Signing out…" : "Logout"}
+                            </span>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                </SidebarMenu>
+            </SidebarFooter>
+            <SidebarRail />
+        </Sidebar>
     );
 }

@@ -1,11 +1,15 @@
+"use client";
+
 import type { ReactNode } from "react";
+
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 import { DashboardSidebar } from "./dashboard-sidebar";
 import { DashboardTopBar } from "./dashboard-top-bar";
 import { DashboardFooter } from "./dashboard-footer";
 
 /**
- * Shared chrome for authenticated app routes — one sidebar + top bar for the same user.
+ * Shared chrome for authenticated app routes — shadcn sidebar (icon collapse from `md` up; sheet below).
  */
 export function AppShell({
     children,
@@ -17,16 +21,16 @@ export function AppShell({
     userSubtitle?: string;
 }>) {
     return (
-        <div className="min-h-screen bg-surface font-body text-on-surface antialiased">
+        <SidebarProvider className="min-h-svh">
             <DashboardSidebar />
-            <main className="ml-64 min-h-screen">
+            <SidebarInset className="min-h-svh bg-surface font-body text-on-surface antialiased">
                 <DashboardTopBar
                     userName={userName}
                     userSubtitle={userSubtitle}
                 />
                 {children}
                 <DashboardFooter />
-            </main>
-        </div>
+            </SidebarInset>
+        </SidebarProvider>
     );
 }

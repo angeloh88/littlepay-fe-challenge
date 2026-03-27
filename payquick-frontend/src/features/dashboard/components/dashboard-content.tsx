@@ -26,7 +26,7 @@ const chartMonths: { label: string; left: number; right: number }[] = [
 
 export function DashboardContent() {
     return (
-        <div className="px-10 pb-12 pt-28">
+        <div className="px-10 pb-12 pt-8">
             <div className="grid grid-cols-12 gap-10">
                 <div className="col-span-12 space-y-10 lg:col-span-8">
                     {/* Total Balance */}

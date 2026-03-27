@@ -1,87 +1,85 @@
 "use client";
 
+import { useState } from "react";
 import { useTransactionsQuery } from "@/features/auth/hooks/use-transactions-query";
+import { Button } from "@/components/ui/button";
 import { type Transaction } from "@/lib/services/transactions.api";
-import { BanknoteArrowDown, BanknoteArrowUp } from "lucide-react";
+import { TransactionRow } from "./transactions-row";
 
-function StatusBadge({
-    label,
-    variant,
-}: {
-    label: string;
-    variant: "primary" | "tertiary";
-}) {
-    if (variant === "tertiary") {
-        return (
-            <span className="rounded-full bg-tertiary-fixed px-3 py-1 font-label text-[0.625rem] font-bold uppercase text-on-tertiary-fixed-variant">
-                {label}
-            </span>
-        );
-    }
-    return (
-        <span className="rounded-full bg-primary-fixed px-3 py-1 font-label text-[0.625rem] font-bold uppercase text-on-primary-fixed-variant">
-            {label}
-        </span>
+function nesttedGroupTransactionsByYearMonth(transactions: Transaction[]) {
+    return transactions.reduce(
+        (acc, transaction) => {
+            const year = new Date(transaction.created_at).getFullYear();
+            const month = new Date(transaction.created_at).getMonth();
+            acc[year] = acc[year] || [];
+            acc[year][month] = acc[year][month] || [];
+            acc[year][month].push(transaction);
+            return acc;
+        },
+        {} as Record<number, Record<number, Transaction[]>>,
     );
 }
 
-function TransactionRow({ row }: { row: Transaction }) {
-    const Icon = row.type === "TRANSFER" ? BanknoteArrowDown : BanknoteArrowUp;
-
-    return (
-        <div className="group flex items-center justify-between rounded-2xl bg-surface-container-lowest p-4 shadow-sm transition-all hover:bg-white dark:hover:bg-slate-800">
-            <div className="flex items-center gap-4">
-                <div
-                    className={`flex h-12 w-12 items-center justify-center rounded-xl bg-surface-container-low ${row.type === "TRANSFER" ? "text-primary" : "text-tertiary"}`}
-                >
-                    <Icon className="size-6" strokeWidth={2} aria-hidden />
-                </div>
-                <div>
-                    <h3 className="font-body text-[0.875rem] font-bold text-on-surface">
-                        {row.currency} {row.amount_in_cents}
-                    </h3>
-                    <p className="font-label text-[0.6875rem] text-slate-500">
-                        {row.type}
-                    </p>
-                </div>
-            </div>
-            <div className="flex items-center gap-4 sm:gap-8">
-                <StatusBadge
-                    label={row.status}
-                    variant={row.status === "SUCCESS" ? "primary" : "tertiary"}
-                />
-                <div className="text-right">
-                    <p className={`font-headline text-[1rem] font-bold`}>
-                        {row.amount_in_cents}
-                    </p>
-                    <p className="font-label text-[0.6875rem] text-slate-400">
-                        {row.created_at}
-                    </p>
-                </div>
-            </div>
-        </div>
-    );
+function monthIndexToHeading(monthIndex: number): string {
+    return new Date(2000, monthIndex, 1).toLocaleString("en-US", {
+        month: "long",
+    });
 }
 
 export function TransactionsTable() {
-    const { data, isLoading, isError } = useTransactionsQuery(2);
+    const [page, setPage] = useState<number>(1);
+    const { data, isLoading, isError } = useTransactionsQuery(page);
+
+    const groupedTransactions = nesttedGroupTransactionsByYearMonth(
+        data?.data || [],
+    );
 
     if (isLoading) return <div>Loading...</div>;
     if (isError) return <div>Error</div>;
+    console.log(groupedTransactions);
     return (
         <>
-            <section className="mb-10">
-                <div className="py-3">
-                    <h2 className="font-headline text-sm font-bold uppercase tracking-widest text-outline">
-                        November 2024
-                    </h2>
-                </div>
-                <div className="mt-4 flex flex-col gap-[0.6rem]">
-                    {data?.data.map((row) => (
-                        <TransactionRow key={row.id} row={row} />
-                    ))}
-                </div>
-            </section>
+            {Object.entries(groupedTransactions)
+                .sort(
+                    (a, b) =>
+                        new Date(b[0]).getTime() - new Date(a[0]).getTime(),
+                )
+                .map(([year, months]) => (
+                    <section key={year} className="mb-10">
+                        {Object.entries(months)
+                            .sort(
+                                (a, b) =>
+                                    new Date(b[0]).getTime() -
+                                    new Date(a[0]).getTime(),
+                            )
+                            .map(([month, transactions]) => (
+                                <section key={month} className="mb-10">
+                                    <h3 className="font-headline text-sm font-bold uppercase tracking-widest text-outline">
+                                        {monthIndexToHeading(
+                                            Number.parseInt(month, 10),
+                                        )}{" "}
+                                        {year}
+                                    </h3>
+                                    <div className="mt-4 flex flex-col gap-[0.6rem]">
+                                        {transactions.map((row) => (
+                                            <TransactionRow
+                                                key={row.id}
+                                                row={row}
+                                            />
+                                        ))}
+                                    </div>
+                                </section>
+                            ))}
+                    </section>
+                ))}
+            <Button
+                type="button"
+                variant="outline"
+                className="w-full rounded-2xl border-2 border-dashed border-slate-200 py-4 font-body text-sm font-bold text-slate-400 hover:border-primary hover:text-primary dark:border-slate-600"
+                onClick={() => setPage(page + 1)}
+            >
+                Load more history
+            </Button>
         </>
     );
 }

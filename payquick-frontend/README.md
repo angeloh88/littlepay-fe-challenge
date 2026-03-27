@@ -32,12 +32,12 @@ Copy the example file and adjust values if needed:
 cp .env.example .env.local
 ```
 
-| Variable | Purpose |
-|----------|---------|
-| `MOCK_API_ORIGIN` | Base URL of the mock API (default `http://localhost:3001`) |
-| `NEXT_PUBLIC_APP_URL` | Public app URL (default `http://localhost:3000`) |
-| `SESSION_ACCESS_COOKIE_TIMEOUTINMINUTES` | Access session cookie lifetime in minutes |
-| `SESSION_REFRESH_COOKIE_TIMEOUTINDAYS` | Refresh session cookie lifetime in days |
+| Variable                                 | Purpose                                                    |
+| ---------------------------------------- | ---------------------------------------------------------- |
+| `MOCK_API_ORIGIN`                        | Base URL of the mock API (default `http://localhost:3001`) |
+| `NEXT_PUBLIC_APP_URL`                    | Public app URL (default `http://localhost:3000`)           |
+| `SESSION_ACCESS_COOKIE_TIMEOUTINMINUTES` | Access session cookie lifetime in minutes                  |
+| `SESSION_REFRESH_COOKIE_TIMEOUTINDAYS`   | Refresh session cookie lifetime in days                    |
 
 If you omit variables, `src/lib/env.ts` applies the defaults in the table where noted.
 
@@ -71,7 +71,7 @@ npm run lint
 
 ## Author
 
-[LinkedIn profile](https://www.linkedin.com/in/your-profile) — replace `your-profile` with your public profile slug.
+[Angelo Hernandez](https://www.linkedin.com/in/angelo-hernandez/)
 
 ---
 

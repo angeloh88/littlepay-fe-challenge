@@ -23,7 +23,7 @@ export function DashboardTopBar({
         <header className="sticky top-0 z-50 flex h-fit min-h-20 shrink-0 flex-row items-center justify-between gap-3 border-b border-slate-200/60 bg-white/80 p-3 px-4 shadow-[0px_12px_32px_rgba(25,28,32,0.06)] backdrop-blur-xl sm:px-8 dark:border-slate-800 dark:bg-slate-950/80">
             <div className="flex items-center gap-3 w-1/2">
                 <div className="flex lg:hidden items-center">
-                    <SidebarTrigger className="-ml-1 shrink-0 flex h-10 w-10 items-center justify-center rounded-xl bg-primary-container text-white " />
+                    <SidebarTrigger className="-ml-1 shrink-0 flex h-10 w-10 items-center justify-center rounded-xl bg-primary-container text-white cursor-pointer " />
                 </div>
                 <div className="flex w-full max-w-md items-center gap-2 rounded-full bg-slate-100 px-3 py-2 dark:bg-slate-800/80 sm:gap-4 sm:px-4">
                     <Search

@@ -24,6 +24,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
     SidebarRail,
+    useSidebar,
 } from "@/components/ui/sidebar";
 
 const nav: {
@@ -32,7 +33,7 @@ const nav: {
     icon: typeof LayoutDashboard;
 }[] = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/transactions", label: "Payments", icon: WalletCards },
+    { href: "/transactions", label: "Transactions", icon: WalletCards },
     { href: "#", label: "Cards", icon: CreditCard },
     { href: "#", label: "Insights", icon: BarChart3 },
     { href: "#", label: "Settings", icon: Settings },
@@ -41,6 +42,7 @@ const nav: {
 export function DashboardSidebar() {
     const pathname = usePathname();
     const router = useRouter();
+    const { isMobile, setOpenMobile } = useSidebar();
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     async function handleLogout() {
@@ -60,6 +62,10 @@ export function DashboardSidebar() {
     function isActive(href: string) {
         if (href === "#") return false;
         return pathname === href;
+    }
+
+    function closeMobileIfNeeded() {
+        if (isMobile) setOpenMobile(false);
     }
 
     return (
@@ -101,7 +107,10 @@ export function DashboardSidebar() {
                                             tooltip={item.label}
                                             className="h-11 rounded-xl px-3 text-[0.875rem] font-medium text-slate-500 transition-all duration-200 hover:translate-x-0.5 hover:text-slate-900 data-active:translate-x-0 data-active:bg-white data-active:text-blue-700 data-active:shadow-sm dark:text-slate-400 dark:hover:text-slate-100 dark:data-active:bg-slate-900 dark:data-active:text-blue-400"
                                         >
-                                            <Link href={item.href}>
+                                            <Link
+                                                href={item.href}
+                                                onClick={closeMobileIfNeeded}
+                                            >
                                                 <Icon
                                                     className="size-5"
                                                     strokeWidth={2}
@@ -124,7 +133,10 @@ export function DashboardSidebar() {
                             tooltip={isLoggingOut ? "Signing out…" : "Logout"}
                             disabled={isLoggingOut}
                             aria-busy={isLoggingOut}
-                            onClick={() => void handleLogout()}
+                            onClick={() => {
+                                closeMobileIfNeeded();
+                                void handleLogout();
+                            }}
                             className="h-11 cursor-pointer rounded-xl px-3 text-left text-[0.875rem] font-medium text-slate-500 hover:text-destructive disabled:opacity-50"
                         >
                             <LogOut className="size-5" strokeWidth={2} />

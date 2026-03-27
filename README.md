@@ -51,3 +51,9 @@ npm run dev
 ## Local BFF env
 
 Set `MOCK_API_ORIGIN=http://localhost:3001` in `payquick-frontend/.env.local` (see `payquick-frontend/.env.example`).
+
+## Author
+
+[Angelo Hernandez](https://www.linkedin.com/in/angelo-hernandez/)
+
+---

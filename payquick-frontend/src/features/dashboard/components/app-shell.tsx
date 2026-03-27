@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import { DashboardSidebar } from "./dashboard-sidebar";
 import { DashboardTopBar } from "./dashboard-top-bar";
+import { DashboardFooter } from "./dashboard-footer";
 
 /**
  * Shared chrome for authenticated app routes — one sidebar + top bar for the same user.
@@ -24,6 +25,7 @@ export function AppShell({
                     userSubtitle={userSubtitle}
                 />
                 {children}
+                <DashboardFooter />
             </main>
         </div>
     );

@@ -61,12 +61,16 @@ export async function POST(request: Request) {
     // ✅ Rotate cookies
     const response = NextResponse.json({ status: "success" });
 
+    const accessCookieMaxAge = env.SESSION_ACCESS_COOKIE_TIMEOUTINMINUTES * 60; // seconds
+    const refreshCookieMaxAge =
+        env.SESSION_REFRESH_COOKIE_TIMEOUTINDAYS * 24 * 60 * 60; // seconds
+
     response.cookies.set(SESSION_ACCESS_COOKIE, accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
         path: "/",
-        maxAge: 60 * 15, // 15 min
+        maxAge: accessCookieMaxAge,
     });
 
     response.cookies.set(SESSION_REFRESH_COOKIE, newRefreshToken, {
@@ -74,7 +78,7 @@ export async function POST(request: Request) {
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
         path: "/",
-        maxAge: 60 * 60 * 24 * 7, // 7 days
+        maxAge: refreshCookieMaxAge,
     });
 
     return response;

@@ -29,6 +29,24 @@ function formatAmount(amountInCents: number, currency: string) {
     }).format(amountInCents / 100);
 }
 
+function formatTransactionId(id: string) {
+    return id.replace(/^txn_/, "").toUpperCase();
+}
+
+function formatTransactionDate(dateStr: string) {
+    const date = new Date(dateStr);
+    return new Intl.DateTimeFormat("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false, // 24-hour format
+        timeZoneName: "short", // optional: shows timezone like GMT+8
+    }).format(date);
+}
+
 export function TransactionRow({ row }: { row: Transaction }) {
     const Icon = row.type === "TRANSFER" ? BanknoteArrowDown : BanknoteArrowUp;
 
@@ -41,7 +59,7 @@ export function TransactionRow({ row }: { row: Transaction }) {
                     <Icon className="size-6" strokeWidth={2} aria-hidden />
                 </div>
                 <div>
-                    <h3 className="font-body text-[0.875rem] font-bold text-on-surface">
+                    <h3 className="font-body text-[1rem] font-bold text-on-surface">
                         {formatAmount(row.amount_in_cents, row.currency)}
                     </h3>
                     <p className="font-label text-[0.6875rem] text-slate-500">
@@ -50,18 +68,27 @@ export function TransactionRow({ row }: { row: Transaction }) {
                 </div>
             </div>
             <div className="flex items-center gap-4 sm:gap-8">
+                <div className="text-right">
+                    <div className="flex items-center gap-2">
+                        <p
+                            className={`font-headline text-[0.750rem] font-bold`}
+                        >
+                            Transaction ID:
+                        </p>
+                        <p
+                            className={`font-headline text-[0.750rem] font-bold`}
+                        >
+                            {formatTransactionId(row.id)}
+                        </p>
+                    </div>
+                    <p className="font-label text-[0.6875rem] text-slate-400">
+                        {formatTransactionDate(row.created_at)}
+                    </p>
+                </div>
                 <StatusBadge
                     label={row.status}
                     variant={row.status === "SUCCESS" ? "primary" : "tertiary"}
                 />
-                <div className="text-right">
-                    <p className={`font-headline text-[1rem] font-bold`}>
-                        {row.id}
-                    </p>
-                    <p className="font-label text-[0.6875rem] text-slate-400">
-                        {row.created_at}
-                    </p>
-                </div>
             </div>
         </div>
     );

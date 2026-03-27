@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PayQuick Frontend
 
-## Getting Started
+Frontend for **PayQuick**: a Next.js app with marketing pages, authentication, and an authenticated area for dashboard and transactions. The UI talks to a mock API via Next.js route handlers (`src/app/api/v1/...`), which proxy to the backend configured by environment variables.
 
-First, run the development server:
+## Stack
+
+- **Next.js** (App Router)
+- **React**
+- **TypeScript**
+- **Tailwind CSS**
+- **TanStack Query** for server state
+- **Radix UI** and **shadcn-style** primitives under `src/components/ui`
+
+## Prerequisites
+
+- [Node.js](https://nodejs.org/) (LTS recommended)
+- **npm** (ships with Node)
+
+## Install
+
+From this directory:
+
+```bash
+npm install
+```
+
+## Environment
+
+Copy the example file and adjust values if needed:
+
+```bash
+cp .env.example .env.local
+```
+
+| Variable | Purpose |
+|----------|---------|
+| `MOCK_API_ORIGIN` | Base URL of the mock API (default `http://localhost:3001`) |
+| `NEXT_PUBLIC_APP_URL` | Public app URL (default `http://localhost:3000`) |
+| `SESSION_ACCESS_COOKIE_TIMEOUTINMINUTES` | Access session cookie lifetime in minutes |
+| `SESSION_REFRESH_COOKIE_TIMEOUTINDAYS` | Refresh session cookie lifetime in days |
+
+If you omit variables, `src/lib/env.ts` applies the defaults in the table where noted.
+
+## Run (development)
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000). Ensure the mock API is running at `MOCK_API_ORIGIN` when exercising login and transactions.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Build and run (production)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+## Lint
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run lint
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project layout (overview)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `src/app/` — routes, layouts, and API routes
+- `src/features/` — feature-scoped components and hooks (auth, dashboard, marketing, transactions)
+- `src/lib/` — shared utilities, auth helpers, and API clients
+- `src/components/ui/` — reusable UI primitives
 
-## Deploy on Vercel
+## Author
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+[LinkedIn profile](https://www.linkedin.com/in/your-profile) — replace `your-profile` with your public profile slug.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+This project was bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app). See the [Next.js documentation](https://nextjs.org/docs) for framework details.

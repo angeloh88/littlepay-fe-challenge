@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useRef, useEffect } from "react";
 import { useInfiniteTransactionsQuery } from "@/features/auth/hooks/use-inifinitetransactions-query";
 import { Button } from "@/components/ui/button";
 import { type Transaction } from "@/lib/services/transactions.api";
@@ -27,6 +27,7 @@ function monthIndexToHeading(monthIndex: number): string {
 }
 
 export function TransactionsTable() {
+    const isInfiniteScroll = true;
     const {
         data,
         isLoading,
@@ -41,6 +42,26 @@ export function TransactionsTable() {
 
         return nesttedGroupTransactionsByYearMonth(allTransactions);
     }, [data]);
+
+    const sentinelRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const el = sentinelRef.current;
+        if (!el) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                const first = entries[0];
+                if (!first?.isIntersecting) return;
+                if (!hasNextPage || isFetchingNextPage) return;
+                void fetchNextPage();
+            },
+            { root: null, rootMargin: "200px", threshold: 0 },
+        );
+
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
     if (isLoading) return <div>Loading...</div>;
     if (isError) return <div>Error</div>;
@@ -77,6 +98,7 @@ export function TransactionsTable() {
                             ))}
                     </section>
                 ))}
+            {isInfiniteScroll && <div ref={sentinelRef} aria-hidden />}
             <Button
                 type="button"
                 variant="outline"

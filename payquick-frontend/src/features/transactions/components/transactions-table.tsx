@@ -87,7 +87,7 @@ export function TransactionsTable() {
                 {isFetchingNextPage
                     ? "Loading..."
                     : hasNextPage
-                      ? "Load more history"
+                      ? "Load more transactions"
                       : "No more transactions"}
             </Button>
         </>

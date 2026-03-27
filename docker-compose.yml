@@ -1,0 +1,26 @@
+# Starts the mock API and PayQuick frontend together (one command, two containers).
+# The frontend reaches the API over the Compose network via the service name `api`.
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: docker/fe-challenge-api.Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      PORT: "3001"
+
+  web:
+    build:
+      context: ./payquick-frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_APP_URL: http://localhost:3000
+    ports:
+      - "3000:3000"
+    environment:
+      MOCK_API_ORIGIN: http://api:3001
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+    depends_on:
+      - api

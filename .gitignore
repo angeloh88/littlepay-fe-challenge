@@ -42,5 +42,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# fe_challenge_api — compiled output (npm run build)
+fe_challenge_api/dist/
+
 # some personal files/docs
 /fe-challenge-resources

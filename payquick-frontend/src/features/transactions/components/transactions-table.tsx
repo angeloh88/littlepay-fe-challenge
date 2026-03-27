@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useTransactionsQuery } from "@/features/auth/hooks/use-transactions-query";
+import { useMemo } from "react";
+import { useInfiniteTransactionsQuery } from "@/features/auth/hooks/use-inifinitetransactions-query";
 import { Button } from "@/components/ui/button";
 import { type Transaction } from "@/lib/services/transactions.api";
 import { TransactionRow } from "./transactions-row";
@@ -27,31 +27,36 @@ function monthIndexToHeading(monthIndex: number): string {
 }
 
 export function TransactionsTable() {
-    const [page, setPage] = useState<number>(1);
-    const { data, isLoading, isError } = useTransactionsQuery(page);
+    const {
+        data,
+        isLoading,
+        isError,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+    } = useInfiniteTransactionsQuery();
 
-    const groupedTransactions = nesttedGroupTransactionsByYearMonth(
-        data?.data || [],
-    );
+    const groupedTransactions = useMemo(() => {
+        const allTransactions = data?.pages.flatMap((page) => page.data) ?? [];
+
+        return nesttedGroupTransactionsByYearMonth(allTransactions);
+    }, [data]);
 
     if (isLoading) return <div>Loading...</div>;
     if (isError) return <div>Error</div>;
-    console.log(groupedTransactions);
+
+    if (!data || data.pages.length === 0) {
+        return <div>No transactions yet</div>;
+    }
+
     return (
         <>
             {Object.entries(groupedTransactions)
-                .sort(
-                    (a, b) =>
-                        new Date(b[0]).getTime() - new Date(a[0]).getTime(),
-                )
+                .sort((a, b) => Number(b[0]) - Number(a[0]))
                 .map(([year, months]) => (
                     <section key={year} className="mb-10">
                         {Object.entries(months)
-                            .sort(
-                                (a, b) =>
-                                    new Date(b[0]).getTime() -
-                                    new Date(a[0]).getTime(),
-                            )
+                            .sort((a, b) => Number(b[0]) - Number(a[0]))
                             .map(([month, transactions]) => (
                                 <section key={month} className="mb-10">
                                     <h3 className="font-headline text-sm font-bold uppercase tracking-widest text-outline">
@@ -76,9 +81,14 @@ export function TransactionsTable() {
                 type="button"
                 variant="outline"
                 className="w-full rounded-2xl border-2 border-dashed border-slate-200 py-4 font-body text-sm font-bold text-slate-400 hover:border-primary hover:text-primary dark:border-slate-600"
-                onClick={() => setPage(page + 1)}
+                onClick={() => fetchNextPage()}
+                disabled={!hasNextPage || isFetchingNextPage}
             >
-                Load more history
+                {isFetchingNextPage
+                    ? "Loading..."
+                    : hasNextPage
+                      ? "Load more history"
+                      : "No more transactions"}
             </Button>
         </>
     );

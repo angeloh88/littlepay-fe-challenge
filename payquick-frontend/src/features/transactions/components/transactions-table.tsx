@@ -83,6 +83,61 @@ function TransactionsInitialErrorFallback({
     );
 }
 
+function TransactionsLoadMoreErrorBanner({
+    error,
+    onRetry,
+}: {
+    error: unknown;
+    onRetry: () => void;
+}) {
+    const detail =
+        error instanceof Error && error.message
+            ? error.message
+            : "Check your connection and try again.";
+
+    return (
+        <div
+            role="alert"
+            className="mt-4 rounded-2xl border border-slate-200 bg-surface-container-lowest p-4 shadow-sm dark:border-slate-600"
+        >
+            <span className="sr-only">
+                Could not load more transactions. {detail} Use Try again to
+                retry.
+            </span>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+                <div className="flex gap-3 sm:min-w-0 sm:flex-1">
+                    <div
+                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface-container-low text-tertiary"
+                        aria-hidden
+                    >
+                        <CircleAlert className="size-5" strokeWidth={2} />
+                    </div>
+                    <div className="min-w-0">
+                        <p className="font-headline text-sm font-bold text-on-surface">
+                            Couldn&apos;t load older transactions
+                        </p>
+                        <p className="mt-0.5 font-body text-sm leading-relaxed text-on-surface-variant">
+                            {detail}
+                        </p>
+                    </div>
+                </div>
+                <button
+                    type="button"
+                    className="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-200 bg-transparent px-4 py-3 font-headline text-sm font-bold text-primary hover:border-primary hover:bg-primary/5 dark:border-slate-600 sm:w-auto"
+                    onClick={() => onRetry()}
+                >
+                    <RefreshCw
+                        className="size-4 shrink-0"
+                        strokeWidth={2}
+                        aria-hidden
+                    />
+                    Try again
+                </button>
+            </div>
+        </div>
+    );
+}
+
 export function TransactionsTable() {
     const isInfiniteScroll = true;
     const {
@@ -96,8 +151,6 @@ export function TransactionsTable() {
         hasNextPage,
         isFetchingNextPage,
     } = useInfiniteTransactionsQuery();
-
-    void isFetchNextPageError;
 
     const groupedTransactions = useMemo(() => {
         const allTransactions = data?.pages.flatMap((page) => page.data) ?? [];
@@ -115,6 +168,7 @@ export function TransactionsTable() {
             (entries) => {
                 const first = entries[0];
                 if (!first?.isIntersecting) return;
+                if (isFetchNextPageError) return;
                 if (!hasNextPage || isFetchingNextPage) return;
                 void fetchNextPage();
             },
@@ -123,7 +177,7 @@ export function TransactionsTable() {
 
         observer.observe(el);
         return () => observer.disconnect();
-    }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+    }, [hasNextPage, isFetchingNextPage, isFetchNextPageError, fetchNextPage]);
 
     if (isLoading) return <TransactionsTableSkeleton />;
     if (isError && !data) {
@@ -167,6 +221,12 @@ export function TransactionsTable() {
                             ))}
                     </section>
                 ))}
+            {isFetchNextPageError && !isFetchingNextPage && (
+                <TransactionsLoadMoreErrorBanner
+                    error={error}
+                    onRetry={() => void fetchNextPage()}
+                />
+            )}
             {isFetchingNextPage && (
                 <div
                     className="mt-4 flex flex-col gap-[0.6rem]"
@@ -180,19 +240,21 @@ export function TransactionsTable() {
                 </div>
             )}
             {isInfiniteScroll && <div ref={sentinelRef} aria-hidden />}
-            <Button
-                type="button"
-                variant="outline"
-                className="w-full rounded-2xl border-2 border-dashed border-slate-200 py-4 font-body text-sm font-bold text-slate-400 hover:border-primary hover:text-primary dark:border-slate-600"
-                onClick={() => fetchNextPage()}
-                disabled={!hasNextPage || isFetchingNextPage}
-            >
-                {isFetchingNextPage
-                    ? "Loading more…"
-                    : hasNextPage
-                      ? "Load more transactions"
-                      : "No more transactions"}
-            </Button>
+            {!isFetchNextPageError && (
+                <Button
+                    type="button"
+                    variant="outline"
+                    className="mt-2 w-full rounded-2xl border-2 border-dashed border-slate-200 py-4 font-body text-sm font-bold text-slate-400 hover:border-primary hover:text-primary dark:border-slate-600"
+                    onClick={() => fetchNextPage()}
+                    disabled={!hasNextPage || isFetchingNextPage}
+                >
+                    {isFetchingNextPage
+                        ? "Loading more…"
+                        : hasNextPage
+                          ? "Load more transactions"
+                          : "No more transactions"}
+                </Button>
+            )}
         </>
     );
 }

@@ -6,6 +6,7 @@ import {
     parseUserCookie,
     type SessionUser,
 } from "./cookies";
+import { env } from "@/lib/env";
 
 export async function getSession(): Promise<{
     user: SessionUser | null;
@@ -13,19 +14,45 @@ export async function getSession(): Promise<{
 } | null> {
     const cookieStore = await cookies();
 
-    const accessToken = cookieStore.get(SESSION_ACCESS_COOKIE)?.value;
+    let accessToken = cookieStore.get(SESSION_ACCESS_COOKIE)?.value;
+    const refreshToken = cookieStore.get(SESSION_REFRESH_COOKIE)?.value;
     const rawUser = cookieStore.get(SESSION_USER_COOKIE)?.value;
 
-    // No tokens → no session
+    // ❌ No refresh token at all → fully logged out
+    if (!refreshToken) {
+        return null;
+    }
+
+    // ✅ If access token exists → session is valid
+    if (accessToken) {
+        return {
+            user: rawUser ? parseUserCookie(rawUser) : null,
+            hasTokens: true,
+        };
+    }
+
+    // 🔄 Try refresh
+    const res = await fetch(`${env.NEXT_PUBLIC_APP_URL}/api/v1/token/refresh`, {
+        method: "POST",
+        headers: {
+            cookie: cookieStore.toString(),
+        },
+    });
+
+    if (!res.ok) {
+        return null;
+    }
+
+    // ✅ After refresh, cookies are updated
+    const newCookies = await cookies();
+    accessToken = newCookies.get(SESSION_ACCESS_COOKIE)?.value;
+
     if (!accessToken) {
         return null;
     }
 
-    // Parse user safely (may be null if missing/invalid)
-    const user = rawUser ? parseUserCookie(rawUser) : null;
-
     return {
-        user,
+        user: rawUser ? parseUserCookie(rawUser) : null,
         hasTokens: true,
     };
 }

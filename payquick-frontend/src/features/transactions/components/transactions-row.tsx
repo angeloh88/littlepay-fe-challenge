@@ -22,6 +22,13 @@ function StatusBadge({
     );
 }
 
+function formatAmount(amountInCents: number, currency: string) {
+    return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency,
+    }).format(amountInCents / 100);
+}
+
 export function TransactionRow({ row }: { row: Transaction }) {
     const Icon = row.type === "TRANSFER" ? BanknoteArrowDown : BanknoteArrowUp;
 
@@ -35,7 +42,7 @@ export function TransactionRow({ row }: { row: Transaction }) {
                 </div>
                 <div>
                     <h3 className="font-body text-[0.875rem] font-bold text-on-surface">
-                        {row.currency} {row.amount_in_cents}
+                        {formatAmount(row.amount_in_cents, row.currency)}
                     </h3>
                     <p className="font-label text-[0.6875rem] text-slate-500">
                         {row.type}
@@ -49,7 +56,7 @@ export function TransactionRow({ row }: { row: Transaction }) {
                 />
                 <div className="text-right">
                     <p className={`font-headline text-[1rem] font-bold`}>
-                        {row.amount_in_cents}
+                        {row.id}
                     </p>
                     <p className="font-label text-[0.6875rem] text-slate-400">
                         {row.created_at}

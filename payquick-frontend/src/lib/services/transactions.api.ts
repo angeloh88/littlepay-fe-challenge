@@ -1,3 +1,5 @@
+import { fetchWithRefresh } from "./refresh.api";
+
 export type Transaction = {
     id: string;
     amount_in_cents: number;
@@ -21,14 +23,14 @@ export type TransactionsResponse = {
 };
 
 export async function getTransactions(page = 1): Promise<TransactionsResponse> {
-    const res = await fetch(`/api/v1/transactions?page=${page}`, {
+    const res = await fetchWithRefresh(`/api/v1/transactions?page=${page}`, {
         method: "GET",
-        credentials: "include", // ✅ required
     });
 
     if (!res.ok) {
-        throw new Error("Failed to fetch transactions");
+        const text = await res.text();
+        throw new Error(text || "Failed to fetch transactions");
     }
 
-    return res.json();
+    return res.json() as Promise<TransactionsResponse>;
 }

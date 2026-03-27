@@ -89,7 +89,7 @@ export function DashboardContent() {
                             </div>
                         </div>
                         <div className="absolute -right-20 -top-20 h-80 w-80 rounded-full bg-blue-100/50 blur-[80px] dark:bg-blue-900/20" />
-                        <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-indigo-50/50 blur-[40px] dark:bg-indigo-950/30" />
+                        <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-indigo-50/50 blur-2xl dark:bg-indigo-950/30" />
                     </section>
 
                     {/* Financial Activity */}

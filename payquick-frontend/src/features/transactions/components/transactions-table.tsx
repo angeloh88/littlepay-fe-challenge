@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useEffect } from "react";
+import { CircleAlert, RefreshCw } from "lucide-react";
 import { useInfiniteTransactionsQuery } from "@/features/auth/hooks/use-inifinitetransactions-query";
 import { Button } from "@/components/ui/button";
 import { type Transaction } from "@/lib/services/transactions.api";
@@ -30,16 +31,73 @@ function monthIndexToHeading(monthIndex: number): string {
     });
 }
 
+function TransactionsInitialErrorFallback({
+    error,
+    onRetry,
+}: {
+    error: unknown;
+    onRetry: () => void;
+}) {
+    const detail =
+        error instanceof Error && error.message
+            ? error.message
+            : "Check your connection and try again.";
+
+    return (
+        <div
+            role="alert"
+            className="rounded-2xl bg-surface-container-lowest p-6 shadow-sm"
+        >
+            <span className="sr-only">
+                Failed to load transactions. {detail} Use Try again to retry.
+            </span>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-5">
+                <div
+                    className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-surface-container-low text-tertiary"
+                    aria-hidden
+                >
+                    <CircleAlert className="size-6" strokeWidth={2} />
+                </div>
+                <div className="min-w-0 flex-1">
+                    <h2 className="font-headline text-lg font-bold text-on-surface">
+                        Couldn&apos;t load transactions
+                    </h2>
+                    <p className="mt-1 font-body text-sm leading-relaxed text-on-surface-variant">
+                        {detail}
+                    </p>
+                </div>
+                <button
+                    type="button"
+                    className="inline-flex w-full items-center justify-center gap-2.5 rounded-xl bg-linear-to-br from-primary to-primary-container px-6 py-4 font-headline text-sm font-bold text-on-primary shadow-md transition-all duration-200 hover:opacity-90 active:scale-[0.98] sm:w-auto"
+                    onClick={() => onRetry()}
+                >
+                    <RefreshCw
+                        className="size-5 shrink-0"
+                        strokeWidth={2}
+                        aria-hidden
+                    />
+                    Try again
+                </button>
+            </div>
+        </div>
+    );
+}
+
 export function TransactionsTable() {
     const isInfiniteScroll = true;
     const {
         data,
         isLoading,
         isError,
+        error,
+        refetch,
+        isFetchNextPageError,
         fetchNextPage,
         hasNextPage,
         isFetchingNextPage,
     } = useInfiniteTransactionsQuery();
+
+    void isFetchNextPageError;
 
     const groupedTransactions = useMemo(() => {
         const allTransactions = data?.pages.flatMap((page) => page.data) ?? [];
@@ -68,7 +126,14 @@ export function TransactionsTable() {
     }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
     if (isLoading) return <TransactionsTableSkeleton />;
-    if (isError) return <div>Error</div>;
+    if (isError && !data) {
+        return (
+            <TransactionsInitialErrorFallback
+                error={error}
+                onRetry={() => void refetch()}
+            />
+        );
+    }
 
     if (!data || data.pages.length === 0) {
         return <div>No transactions yet</div>;

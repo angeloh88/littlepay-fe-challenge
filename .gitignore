@@ -47,3 +47,4 @@ fe_challenge_api/dist/
 
 # some personal files/docs
 /fe-challenge-resources
+/playwright-tests/

@@ -18,6 +18,8 @@ These routes render **static UI** from the challenge designs (marketing shell, a
 | ----------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Transaction history** | [`/transactions`](http://localhost:3000/transactions) | **Requires login.** **Dynamic:** the list is loaded from the mock API (`GET /v1/transactions` with pagination) through Next.js route handlers (`/api/v1/transactions`). The UI uses client-side fetching (TanStack Query) with infinite scroll / “load more”. |
 
+**Development-only delay (loading skeletons):** In `development`, [`payquick-frontend/src/features/auth/hooks/use-inifinitetransactions-query.ts`](payquick-frontend/src/features/auth/hooks/use-inifinitetransactions-query.ts) waits **1 second** before each transactions request so you can see the transactions table skeleton UI (initial load and “load more”) when the API responds quickly. This does not run in production builds (`NODE_ENV === "production"`). Remove or shorten the delay locally if it gets in the way.
+
 ### How to access pages
 
 1. **Start the app and API** (see [Run with Docker](#run-with-docker-api--frontend) or [local Node](#avoid-port-clash-api-vs-next--local-node) below). The UI is at **http://localhost:3000** when using the default port.
